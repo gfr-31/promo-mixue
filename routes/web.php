@@ -12,8 +12,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/dashboard', Dashboard::class)
-    ->middleware(['auth', 'verified'])
     ->name('dashboard');
+    // ->middleware(['auth', 'verified'])
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
@@ -21,28 +21,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
-});
-
-Route::get('/test-firebase', function () {
-    $factory = (new Factory)
-        ->withServiceAccount(storage_path('app/firebase/firebase_credentials.json'))
-        ->withDatabaseUri(env('FIREBASE_DATABASE_URL'));
-
-    $database = $factory->createDatabase();
-
-    $promoData = [
-        'title' => 'Promo Es Krim',
-        'periode' => '1 April - 30 April'
-    ];
-
-    $newPromo = $database
-        ->getReference('promos')
-        ->push($promoData);
-
-    return response()->json([
-        'status' => 'Promo created',
-        'id' => $newPromo->getKey()
-    ]);
 });
 
 require __DIR__.'/auth.php';

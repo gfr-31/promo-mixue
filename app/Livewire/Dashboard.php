@@ -28,7 +28,6 @@ class Dashboard extends Component
         $database->getReference('promos')->push($data);
 
         $this->reset(['promo', 'periode']);
-        $this->refreshData();
     }
     public function refreshData(Database $database)
     {

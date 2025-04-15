@@ -11,6 +11,8 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Kreait\Firebase\Auth as FirebaseAuth;
+use Kreait\Firebase\Exception\Auth\AuthError;
 
 #[Layout('components.layouts.auth')]
 class Login extends Component
@@ -23,6 +25,13 @@ class Login extends Component
 
     public bool $remember = false;
 
+    protected FirebaseAuth $auth;
+
+    public function boot(FirebaseAuth $auth): void
+    {
+        $this->auth = $auth;
+    }
+
     /**
      * Handle an incoming authentication request.
      */
@@ -30,20 +39,21 @@ class Login extends Component
     {
         $this->validate();
 
-        $this->ensureIsNotRateLimited();
+        try {
+            $signInResult = $this->auth->signInWithEmailAndPassword($this->email, $this->password);
+            $firebaseUser = $signInResult->firebaseUserId();
 
-        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
-            RateLimiter::hit($this->throttleKey());
+            // Simpan UID ke session Laravel
+            Session::put('firebase_uid', $firebaseUser);
+            Session::regenerate();
 
+            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+
+        } catch (AuthError $e) {
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => 'Email atau password salah.',
             ]);
         }
-
-        RateLimiter::clear($this->throttleKey());
-        Session::regenerate();
-
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
 
     /**
@@ -51,7 +61,7 @@ class Login extends Component
      */
     protected function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -72,6 +82,6 @@ class Login extends Component
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
     }
 }
