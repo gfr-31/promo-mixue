@@ -1,3 +1,4 @@
+!storage/app/firebase-credentials.json
 /.phpunit.cache
 /node_modules
 /public/build
@@ -21,4 +22,3 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-!storage/app/firebase-credentials.json
