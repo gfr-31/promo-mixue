@@ -1,4 +1,3 @@
-!storage/app/firebase-credentials.json
 /.phpunit.cache
 /node_modules
 /public/build

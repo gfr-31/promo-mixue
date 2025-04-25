@@ -15,19 +15,22 @@ class FirebaseService
 
     public function __construct()
     {
-        $firebaseCredentials = storage_path('app/firebase-credentials.json');
-    
-        if (!file_exists($firebaseCredentials)) {
-            dd("File kredensial tidak ditemukan di: " . $firebaseCredentials);
+        $base64Credentials = env('FIREBASE_CREDENTIALS');
+
+        if (!$base64Credentials) {
+            dd("FIREBASE_CREDENTIALS env tidak ditemukan.");
         }
-    
-        if (!is_readable($firebaseCredentials)) {
-            dd("File kredensial tidak dapat dibaca di: " . $firebaseCredentials);
+
+        $credentialsArray = json_decode(base64_decode($base64Credentials), true);
+
+        if (!$credentialsArray) {
+            dd("Gagal decode credentials. Pastikan format base64 benar.");
         }
-    
+
         $this->firebase = (new Factory)
-            ->withServiceAccount($firebaseCredentials)
+            ->withServiceAccount($credentialsArray)
             ->withDatabaseUri('https://promo-mixue-default-rtdb.asia-southeast1.firebasedatabase.app');
+
         $this->auth = $this->firebase->createAuth();
         $this->database = $this->firebase->createDatabase();
     }

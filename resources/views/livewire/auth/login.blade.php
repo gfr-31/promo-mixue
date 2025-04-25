@@ -1,8 +1,8 @@
 <div class="flex min-h-screen">
-    <div class="flex-1 flex justify-center items-center">
-        <div class="w-80 max-w-80 space-y-6">
+    <div class="flex-1 flex justify-center  ">
+        <div class="w-80 max-w-80 space-y-6 my-15">
             <div class="flex justify-center opacity-50">
-                <a href="/" class="group flex items-center gap-3">
+                <a href="#" class="group flex items-center gap-3">
                     <div>
                         <svg class="h-4 text-zinc-800 dark:text-white" viewBox="0 0 18 13" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
