@@ -15,16 +15,22 @@ class FirebaseService
 
     public function __construct()
     {
-        $base64Credentials = env('FIREBASE_CREDENTIALS');
+        $base64Credentials = env('FIREBASE_CREDENTIALS_BASE64');
 
         if (!$base64Credentials) {
-            dd("FIREBASE_CREDENTIALS env tidak ditemukan.");
+            throw new \Exception('FIREBASE_CREDENTIALS_BASE64 env tidak ditemukan.');
         }
 
-        $credentialsArray = json_decode(base64_decode($base64Credentials), true);
+        $decodedJson = base64_decode($base64Credentials);
+
+        if (!$decodedJson) {
+            throw new \Exception('Gagal decode FIREBASE_CREDENTIALS_BASE64.');
+        }
+
+        $credentialsArray = json_decode($decodedJson, true);
 
         if (!$credentialsArray) {
-            dd("Gagal decode credentials. Pastikan format base64 benar.");
+            throw new \Exception('JSON dari kredensial Firebase tidak valid.');
         }
 
         $this->firebase = (new Factory)

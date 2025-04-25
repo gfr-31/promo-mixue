@@ -6,7 +6,6 @@ use App\Services\FirebaseService;
 use Livewire\Component;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Auth as FirebaseAuth;
-use Kreait\Firebase\Auth\SignInResult;
 
 class Login extends Component
 {
