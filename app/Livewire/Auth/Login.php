@@ -17,7 +17,7 @@ class Login extends Component
         'password' => 'required|min:6',
     ];
 
-    public function login(FirebaseService $firebaseService)
+    public function login()
     {
         $this->validate([
             'email' => 'required|email',
@@ -39,12 +39,6 @@ class Login extends Component
             if ($this->remember) {
                 cookie()->queue(cookie('firebase_token', $token, 43200)); // 30 hari
             }
-
-            // $firebaseService->storeUserIfNotExists($firebaseUser, [
-            //     'name' => 'gifran',
-            //     'email' => 'akunmu@firebase.com',
-            //     'role' => 'head', // atau 'head'
-            // ]);
 
             return redirect()->route('dashboard');
 
