@@ -20,15 +20,16 @@ class AppServiceProvider extends ServiceProvider
 
             // Cek apakah file sudah ada
             if (!file_exists($firebaseCredentialsPath)) {
-                // Coba buat dari environment variable
+                Log::error('firebase-credentials.json tidak ditemukan. Membuat dari env.');
+
+                // Coba buat dari env
                 $base64Credentials = env('FIREBASE_CREDENTIALS_BASE64');
 
                 if (!$base64Credentials) {
-                    Log::error('File kredensial Firebase tidak ditemukan dan tidak ada env FIREBASE_CREDENTIALS_BASE64.');
+                    Log::error('Env FIREBASE_CREDENTIALS_BASE64 tidak ada.');
                     throw new \Exception('Firebase credentials missing.');
                 }
 
-                // Decode dan buat file
                 $decodedCredentials = base64_decode($base64Credentials);
 
                 if ($decodedCredentials === false) {
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 Storage::disk('local')->put('firebase-credentials.json', $decodedCredentials);
+                Log::info('firebase-credentials.json berhasil dibuat di storage/app.');
             }
 
             // Pastikan file bisa dibaca
