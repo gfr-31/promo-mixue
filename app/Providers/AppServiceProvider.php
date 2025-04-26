@@ -39,6 +39,20 @@ class AppServiceProvider extends ServiceProvider
 
                 Storage::disk('local')->put('firebase-credentials.json', $decodedCredentials);
                 Log::info('firebase-credentials.json berhasil dibuat di storage/app.');
+
+                $path = storage_path('app/firebase-credentials.json');
+
+                // Validasi file berhasil dibuat
+                if (!file_exists($path) || filesize($path) === 0) {
+                    Log::error('File firebase-credentials.json kosong setelah dibuat.');
+                    throw new \Exception('Firebase credentials file is empty after creation.');
+                }
+
+                $content = file_get_contents($path);
+                if (json_decode($content) === null) {
+                    Log::error('File firebase-credentials.json hasil decode bukan JSON valid.');
+                    throw new \Exception('Firebase credentials file is not valid JSON.');
+                }
             }
 
             // Pastikan file bisa dibaca
